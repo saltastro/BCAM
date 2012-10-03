@@ -304,7 +304,7 @@ class BCAM:
 
     def makeHeader(self, ccdtype, exptime):
         cam = BCAM.camera
-        f = BCAM.foc
+
         cards = []
         cards.append(pyfits.createCard("CCDTYPE", ccdtype, "CCD type"))
         cards.append(pyfits.createCard("EXPTIME", exptime, "Exposure time (s)"))
@@ -347,10 +347,12 @@ class BCAM:
                                        "Camera heatsink temperature in C"))
         cards.append(pyfits.createCard("MODEL", cam.GetModel(), "Camera model"))
         cards.append(pyfits.createCard("SENSOR", cam.GetSensor(), "Camera sensor"))
-        if f.attached:
-            cards.append(pyfits.createCard("BCAMFOC", f.position(), "BCAM focus position"))
+        if BCAM.foc.attached:
+            cards.append(pyfits.createCard("BCAMFOC", 
+                                           BCAM.foc.position(), 
+                                           "BCAM focus position"))
             cards.append(pyfits.createCard("FLITEMP", 
-                                           f.temperature(), 
+                                           BCAM.foc.temperature(), 
                                            "BCAM focuser temperature (C)"))
         return pyfits.Header(cards=cards)
 
