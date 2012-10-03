@@ -1,0 +1,145 @@
+$def with (cam)
+
+$def shutter(state):
+   $if state == 0:
+       <td style="background: red">Unknown</td>
+   $if state == 1:
+       <td>Normal</td>
+   $if state == 2:
+       <td>Forced Open</td>
+   $if state == 3:
+       <td>Forced Closed</td>
+
+$def camstatus(state):
+   $if state == -3:
+       <td style="background: red">Connection Error</td>
+   $if state == -2:
+       <td style="background: red">Data Error</td>
+   $if state == -1:
+       <td style="background: red">Pattern Error</td>
+   $if state == 0:
+       <td>Idle</td>
+   $if state == 1:
+       <td><b>Exposing...</b></td>
+   $if state == 2:
+       <td><b>Imaging Active...</b></td>
+   $if state == 3:
+       <td><b>Image Ready!</b></td>
+   $if state == 4:
+       <td>Flushing...</td>
+   $if state == 5:
+       <td>Waiting on trigger...</td>
+
+$def fanmode(state):
+   $if state == 0:
+       <td>Off</td>
+   $if state == 1:
+       <td>Low</td>
+   $if state == 2:
+       <td>Medium</td>
+   $if state == 3:
+       <td>High</td>
+   $if state == 4:
+       <td style="background: red">ERROR!</td>
+
+$def cooler(state):
+   $if state == 0:
+       <td>Off</td>
+   $if state == 1:
+       <td>Ramping...</td>
+   $if state == 2:
+       <td>At Set Point</td>
+   $if state == 3:
+       <td>Revision</td>
+   $if state == 4:
+       <td style="background: yellow">Suspended</td>
+
+<html>
+  <head>
+    <meta http-equiv="refresh" content="2">
+    <style>
+      table {border-collapse: collapse;}
+      table, th, td {border: 1px solid black;}
+    </style>
+    <title>BCAM Status & Control</title>
+  </head>
+  <body>
+    <h1>BCAM Status & Control</h1>
+    <table cellpadding="5" width="400px" style="table-layout: fixed">
+
+      <tr style="background: lightgrey">
+	<td>
+	  <b>Imaging Status</b>
+	</td>
+	$:camstatus(cam.GetImagingStatus())
+      </tr>
+      <tr>
+	<td>
+	  <b>Fan Mode</b>
+	</td>
+	$:fanmode(cam.GetFanMode())
+      </tr>
+      <tr style="background: lightgrey">
+	<td>
+	  <b>Cooler Status</b>
+	</td>
+	$:cooler(cam.GetCoolerStatus())
+      <tr>
+	<td>
+	  <b>T(CCD)<b>
+	</td>
+	<td>
+	  ${"%.2f" % cam.GetTempCcd()}
+	</td>
+      </tr>
+
+      <tr style="background: lightgrey">
+	<td>
+	  <b>T(Heatsink)<b>
+	</td>
+	<td>
+	  ${"%.2f" % cam.GetTempHeatsink()}
+	</td>
+      </tr>
+
+      <tr>
+	<td>
+	  <b>T(Setpoint)<b>
+	</td>
+	<td>
+	  ${"%.2f" % cam.GetCoolerSetPoint()}
+	</td>
+      </tr>
+
+      <tr style="background: lightgrey">
+	<td>
+	  <b>T(Back-off)<b>
+	</td>
+	<td>
+	  ${"%.2f" % cam.GetCoolerBackoffPoint()}
+	</td>
+      </tr>
+
+      <tr>
+	<td>
+	  <b>Cooler Drive (%)<b>
+	</td>
+	<td>
+	  ${"%.2f" % cam.GetCoolerDrive()}
+	</td>
+      </tr>
+
+      <tr style="background: lightgrey">
+	<td>
+	  <b>Shutter Mode<b>
+	</td>
+	$:shutter(cam.GetShutterState())
+      </tr>
+    </table>
+    <p>
+      <a href="expose">Make an Exposure</a>
+    <p>
+      <a href="cooling">Configure Cooling</a>
+  </body>
+</html>
+

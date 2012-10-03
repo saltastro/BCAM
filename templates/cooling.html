@@ -1,0 +1,9 @@
+$def with (form)
+
+<form name="main" method="post"> 
+  $if not form.valid: <p class="error">Try again, AmeriCAN:</p>
+  $:form.render()
+</form>
+
+<p>
+<a href="http://caliente.suth:8080/">Go Back</a>
