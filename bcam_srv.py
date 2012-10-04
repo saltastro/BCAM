@@ -12,14 +12,16 @@ urls = (
     '/', 'index',
     '/expose', 'expose',
     '/cooling', 'cooling',
+    '/focus', 'focus',
 )
 
 b = bcam.BCAM()
 ccd = b.camera
+foc = b.foc
 
 class index:
     def GET(self):
-        return render.index(ccd)
+        return render.index(ccd, foc)
 
 class expose:
     form = web.form.Form(
@@ -121,6 +123,33 @@ class cooling:
             ccd.SetCoolerBackoffPoint(backoff)
             ccd.SetCoolerSetPoint(setpoint)
             return render.cooling(f)
+
+class focus:
+    form = web.form.Form(
+        web.form.Textbox('focus', 
+                         web.form.notnull, 
+                         web.form.Validator('Must be >= 0.0 and <= 7000', 
+                                            lambda x:int(x)>=0 and int(x)<=7000),
+                         value=foc.position(),
+                         size=30,
+                         description="BCAM Focus Position:",
+                         ),
+        web.form.Button('Set Focus',
+                         type='submit',
+                        ),
+    )
+
+    def GET(self):
+        return render.focus(focus.form)
+
+    def POST(self):
+        f = focus.form()
+        if not f.validates():
+            return render.focus(f)
+        else:
+            newfocus = int(f.d.focus)
+            foc.goto(newfocus, async=True)
+            return render.focus(f)
 
 if __name__ == "__main__":
 
