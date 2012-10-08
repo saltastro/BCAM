@@ -9,6 +9,7 @@ import logging
 from pylibapogee import pylibapogee as apg
 from ctypes import *
 
+# TODO: sort out this absolute path in a sane way
 libfli = CDLL("/home/tim/BCAM/libfli-1.104/libfli.so")
 
 def add_coloring_to_emit_ansi(fn):
@@ -42,13 +43,13 @@ f = logging.Formatter("%(levelname)s: %(message)s")
 ch.setFormatter(f)
 logging.StreamHandler.emit = add_coloring_to_emit_ansi(logging.StreamHandler.emit)
 
-
 class Focuser:
     """
     class for talking to an FLI precision focuser.  requires FLI's fliusb-1.3 and libfli-1.104.
     """
     attached = False
 
+    # default to the first FLI device (always true for BCAM)
     def __init__(self, device="/dev/fliusb0"):
         if not Focuser.attached:
             Focuser.handle = c_long()
@@ -62,6 +63,7 @@ class Focuser:
                            (device, Focuser.handle.value))
                 Focuser.attached = True
 
+    # get current focus position
     def position(self):
         if Focuser.attached:
             position = c_long()
@@ -75,6 +77,7 @@ class Focuser:
         else:
             b_log.warn("Can't query stepper position: no device attached.")
 
+    # get upper limits (should be 7000)
     def upper_limit(self):
         if Focuser.attached:
             limit = c_long()
@@ -88,6 +91,7 @@ class Focuser:
         else:
             b_log.warn("Can't query stepper limit: no device attached.")
 
+    # no way to query it, but empirically it's 0
     def lower_limit(self):
         if Focuser.attached:
             b_log.info("FLI Focuser minimum position: %d", 0)
@@ -96,6 +100,7 @@ class Focuser:
             b_log.warn("Can't query stepper limit: no device attached.")
             return None
 
+    # get the internal temperature of the focuser
     def temperature(self):
         if Focuser.attached:
             t = c_double()
@@ -109,7 +114,8 @@ class Focuser:
         else:
             b_log.warn("Can't query focuser temperature: no device attached.")
             return None
-
+        
+    # home the focuser
     def home(self):
         if Focuser.attached:
             b_log.info("Homing FLI Focuser....")
@@ -124,6 +130,8 @@ class Focuser:
             b_log.warn("Can't home focuser: no device attached.")
             return False
 
+    # to a movement where 'steps' is relative to the current position.  async determines which command is used
+    # to determine whether to command motion and return right away or to wait until motion is complete. 
     def step(self, steps, async=False):
         if Focuser.attached:
             now = self.position()
@@ -153,6 +161,7 @@ class Focuser:
             b_log.warn("Can't step focuser: no device attached.")
             return False
 
+    # perform movement to an absolute position.
     def goto(self, position, async=False):
         now = self.position()
         delta = position - now
@@ -179,6 +188,7 @@ class BCAM:
             else:
                 BCAM.camera = None
 
+    # get listing of attached apogee devices
     def getUsbApogees(self):
         msg = apg.FindDeviceUsb().Find()
         return self.parseDeviceStr(msg)
@@ -233,7 +243,8 @@ class BCAM:
             deviceDictList.append(devDict)
         
         return deviceDictList
-    
+
+    # connect to camera and return camera object
     def createAndConnectCam(self, devDict):
         cam = None
         if("AltaU" == devDict["camType"] or
@@ -254,9 +265,13 @@ class BCAM:
                        ( cam.GetModel(), devDict["interface"] ) )
         return cam
 
+    # acquire image from camera
     def acquireImage(self, exp, shutter, xbin=1, ybin=1, startx=0, starty=0, endx=4096, endy=4096):
         cam = BCAM.camera
 
+# TODO: set up working check here to see if an exposure is on-going.  i think Flushing is the right
+# one to check for by default.
+#
 #        status = None
 #        while status != apg.Status_Idle:
 #            status = cam.GetImagingStatus()
@@ -300,8 +315,10 @@ class BCAM:
 
         data = cam.GetImage()
 
+        # default to unsigned 16-bit ints and reshape appropriately
         return np.array(data, dtype=np.uint16).reshape(rows,cols)
 
+    # set up FITS header information 
     def makeHeader(self, ccdtype, exptime):
         cam = BCAM.camera
 

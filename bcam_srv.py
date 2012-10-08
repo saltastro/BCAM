@@ -130,7 +130,7 @@ class focus:
                          web.form.notnull, 
                          web.form.Validator('Must be >= 0.0 and <= 7000', 
                                             lambda x:int(x)>=0 and int(x)<=7000),
-                         value=foc.position(),
+                         value="%d" % foc.position(),
                          size=30,
                          description="BCAM Focus Position:",
                          ),
