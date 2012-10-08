@@ -123,7 +123,7 @@ class cooling:
             ccd.SetFanMode(fanmode)
             ccd.SetCoolerBackoffPoint(backoff)
             ccd.SetCoolerSetPoint(setpoint)
-            return render.cooling(f)
+            return "<html><meta http-equiv=\"refresh\" content='0;URL=\"/status\"'></html>"
 
 class focus:
     form = web.form.Form(
@@ -150,7 +150,7 @@ class focus:
         else:
             newfocus = int(f.d.focus)
             foc.goto(newfocus, async=True)
-            return "<html><meta http-equiv=\"refresh\" content='0;URL=\"/status\"></html>"
+            return "<html><meta http-equiv=\"refresh\" content='0;URL=\"/status\"'></html>"
 
 if __name__ == "__main__":
 
