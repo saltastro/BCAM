@@ -126,12 +126,13 @@ class cooling:
             return "<html><meta http-equiv=\"refresh\" content='0;URL=\"/status\"'></html>"
 
 class focus:
+    current = foc.position()
     form = web.form.Form(
         web.form.Textbox('focus', 
                          web.form.notnull, 
                          web.form.Validator('Must be >= 0.0 and <= 7000', 
                                             lambda x:int(x)>=0 and int(x)<=7000),
-                         value="%d" % foc.position(),
+                         value="%d" % focus.current,
                          size=30,
                          description="BCAM Focus Position:",
                          ),
@@ -141,6 +142,7 @@ class focus:
     )
 
     def GET(self):
+        focus.current = foc.position()
         return render.focus(focus.form)
 
     def POST(self):
