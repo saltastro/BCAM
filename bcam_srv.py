@@ -132,9 +132,8 @@ class focus:
                          web.form.notnull, 
                          web.form.Validator('Must be >= 0.0 and <= 7000', 
                                             lambda x:int(x)>=0 and int(x)<=7000),
-                         value="%d" % foc.position(),
-                         size=30,
-                         description="BCAM Focus Position:",
+                         size=10,
+                         description="New Focus Position:",
                          ),
         web.form.Button('Set Focus',
                          type='submit',
@@ -142,12 +141,12 @@ class focus:
     )
 
     def GET(self):
-        return render.focus(focus.form)
+        return render.focus(foc, focus.form)
 
     def POST(self):
         f = focus.form()
         if not f.validates():
-            return render.focus(f)
+            return render.focus(foc, f)
         else:
             newfocus = int(f.d.focus)
             foc.goto(newfocus, async=True)

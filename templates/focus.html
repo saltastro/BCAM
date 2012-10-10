@@ -1,9 +1,33 @@
-$def with (form)
+$def with (foc, form)
 
-<form name="main" method="post"> 
-  $if not form.valid: <p class="error">Try again, AmeriCAN:</p>
-  $:form.render()
-</form>
+<html>
+  <head>
+    <title>BCAM Focus</title>
+  </head>
+  <body>
+    <h1>BCAM FLI Focuser Control</h1>
+    <table>
+      <tr>
+	<td>
+	  <b>Current Focus Position:</b>
+	</td>
+	<td>
+	  $foc.position()
+	</td>
+      </tr>
+      <tr>
+	<td colspan='2'>
+	  <form name="main" method="post"> 
+	    $if not form.valid: <p class="error">Try again, AmeriCAN:</p>
+	    $:form.render()
+	  </form>
+	</td>
+      </tr>
+    </table>
+    <p>
+      <a href="/status">Go Back</a>
+  </body>
+</html>
 
-<p>
-<a href="/status">Go Back</a>
+
+
