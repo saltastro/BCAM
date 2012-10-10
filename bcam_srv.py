@@ -14,6 +14,7 @@ urls = (
     '/expose', 'expose',
     '/cooling', 'cooling',
     '/focus', 'focus',
+    '/getfocus', 'getfocus',
 )
 
 b = bcam.BCAM()
@@ -151,6 +152,10 @@ class focus:
             newfocus = int(f.d.focus)
             foc.goto(newfocus, async=True)
             raise web.seeother('/status')
+
+class getfocus:
+    def GET(self):
+        return foc.position()
 
 if __name__ == "__main__":
 
