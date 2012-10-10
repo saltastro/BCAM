@@ -123,7 +123,7 @@ class cooling:
             ccd.SetFanMode(fanmode)
             ccd.SetCoolerBackoffPoint(backoff)
             ccd.SetCoolerSetPoint(setpoint)
-            return "<html><meta http-equiv=\"refresh\" content='0;URL=\"/status\"'></html>"
+            raise web.seeother('/status')
 
 class focus:
     current = foc.position()
@@ -152,7 +152,7 @@ class focus:
         else:
             newfocus = int(f.d.focus)
             foc.goto(newfocus, async=True)
-            return "<html><meta http-equiv=\"refresh\" content='0;URL=\"/status\"'></html>"
+            raise web.seeother('/status')
 
 if __name__ == "__main__":
 
