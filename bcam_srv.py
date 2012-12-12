@@ -6,7 +6,7 @@ import bcam
 import web
 from web import form
 
-render = web.template.render('templates/')
+render = web.template.render('/home/tim/BCAM/templates/')
 
 urls = (
     '/', 'index',

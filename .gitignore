@@ -2,3 +2,4 @@
 *.pyc
 bcam.log
 *.o
+bcam-srv.log

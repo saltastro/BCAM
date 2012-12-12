@@ -34,7 +34,7 @@ def add_coloring_to_emit_ansi(fn):
 # Initialize logger
 logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
 b_log = logging.getLogger()
-fh = logging.FileHandler("bcam.log")
+fh = logging.FileHandler("/home/tim/BCAM/bcam.log")
 fh.setLevel(logging.DEBUG)
 fh.setFormatter(logging.Formatter("%(asctime)s: %(levelname)s - %(message)s"))
 b_log.addHandler(fh)
