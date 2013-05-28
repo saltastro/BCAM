@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import cStringIO
-import pyfits
+from astropy.io import fits as pyfits
 import bcam
 import web
 from web import form

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import re
-import pyfits
+from astropy.io import fits as pyfits
 import numpy as np
 
 import logging
